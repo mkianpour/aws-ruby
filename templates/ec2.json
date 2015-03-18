@@ -1,0 +1,23 @@
+    "EC2Instance": {
+
+      "Properties": {
+
+        "ImageId": "ami-b97a12ce",
+
+        "InstanceType": ,
+
+        "SecurityGroups": [
+
+          {
+
+            "Ref": "InstanceSecurityGroup"
+
+          }
+
+        ]
+
+      },
+
+      "Type": "AWS::EC2::Instance"
+
+    },
