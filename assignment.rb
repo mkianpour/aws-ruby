@@ -32,19 +32,19 @@ class TemplateCreator
     end
 
 
-    def add_ec2instance(ec2type)
+    def prepare_ec2instance(ec2type)
         file_name = "#{@path}/ec2.json"
         if File.exists? file_name
             ec2_file = open(file_name)
             ec2_str = ec2_file.read.to_str
             new_str = ec2_str.gsub("\"InstanceType\":", "\"InstanceType\": \"#{ec2type}\"")
-            @out_json = @out_json + new_str
+            insert_in_template(new_str)     
         else
             puts "EC2 Template not found."
         end
     end
     
-    def add_sec_group(aclnet,port)
+    def prepare_sec_group(aclnet,port)
         file_name = "#{@path}/secgrp.json"
         if File.exists? file_name
             sec_file = open(file_name)
@@ -54,15 +54,22 @@ class TemplateCreator
             if !aclnet.include? '/'
                 aclnet = aclnet + '/32'
             end
-            newsec_str = newsec_str.gsub("\"CidrIp\":", "\"CidrIp\": \"#{aclnet}\"")           
-            @out_json = @out_json + newsec_str
+            newsec_str = newsec_str.gsub("\"CidrIp\":", "\"CidrIp\": \"#{aclnet}\"")      
+            insert_in_template(newsec_str)     
         else
             puts "Sec Group Template not found."
         end  
     end
+
+    def insert_in_template(str_to_ins)
+        lasti = @out_json.rindex('}')
+        onetolast = @out_json.rindex('}',lasti-1)
+        @out_json = @out_json.insert(onetolast-1, str_to_ins+"\n")
+    end
     
 end
 
+##---------------------------------------------------------------
 #Number of instances, will be defined by user or default value: 1
 num_instances = 1
 
@@ -90,11 +97,10 @@ ARGV.slice_before(/^--/).each do |name, value|
     end
 end
 
-puts num_instances, ec2_type, acl_net, tcp_port
 gen_template = TemplateCreator.new("./templates")
 
 (1..num_instances).each do 
-    gen_template.add_ec2instance(ec2_type)
+    gen_template.prepare_ec2instance(ec2_type)
 end
-gen_template.add_sec_group(acl_net, tcp_port)
+gen_template.prepare_sec_group(acl_net, tcp_port)
 puts gen_template.out_json
