@@ -10,6 +10,8 @@
 ## AUTHOR: Mehdi Kianpour
 ## DATE: May, 2015
 
+require "json"
+
 
 class TemplateCreator
     
@@ -47,7 +49,21 @@ acl_net = "0.0.0.0/0"
 #Allowed to and from port, will be defined by user or default value: 22
 tcp_port = 22
 
-puts acl_net, ec2_type, num_instances, tcp_port
+#This ruby style loop gets possible arguments by parsing
+#parameters recognized by -- and sets the correspondant value
+ARGV.slice_before(/^--/).each do |name, value|
+    case name
+        when '--instances'
+            num_instances = value.to_i
+        when '--instance-type'
+            ec2_type = value
+        when '--allow-ssh-from'
+            acl_net = value      
+        when '--port'
+            tcp_port = value.to_i
+    end
+end
 
-gen_template = TemplateCreator.new("./templates/general.json")
+puts num_instances, ec2_type, acl_net, tcp_port
+#gen_template = TemplateCreator.new("./templates/general.json")
 
