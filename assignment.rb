@@ -13,7 +13,14 @@
 
 class TemplateCreator
     
-    def initialize()
+    def initialize(file_name)
+        if File.exists? file_name
+            generic_file = open(file_name)
+            puts generic_file.read
+        else
+            puts "Template not found."
+            exit(1)
+        end
     
     end
 
@@ -40,5 +47,7 @@ acl_net = "0.0.0.0/0"
 #Allowed to and from port, will be defined by user or default value: 22
 tcp_port = 22
 
-puts acl_net, ec2_type, num_instances
+puts acl_net, ec2_type, num_instances, tcp_port
+
+gen_template = TemplateCreator.new("./templates/general.json")
 
