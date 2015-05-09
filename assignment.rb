@@ -48,7 +48,14 @@ class TemplateCreator
         file_name = "#{@path}/secgrp.json"
         if File.exists? file_name
             sec_file = open(file_name)
-            @out_json = @out_json + sec_file.read
+            sec_str = sec_file.read.to_str
+            newsec_str = sec_str.gsub("\"FromPort\":", "\"FromPort\": \"#{port}\"")
+            newsec_str = newsec_str.gsub("\"ToPort\":", "\"ToPort\": \"#{port}\"")
+            if !aclnet.include? '/'
+                aclnet = aclnet + '/32'
+            end
+            newsec_str = newsec_str.gsub("\"CidrIp\":", "\"CidrIp\": \"#{aclnet}\"")           
+            @out_json = @out_json + newsec_str
         else
             puts "Sec Group Template not found."
         end  
