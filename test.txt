@@ -35,7 +35,7 @@
 
         "ImageId": "ami-b97a12ce",
 
-        "InstanceType": "t1.micro" ,
+        "InstanceType": "t2.small",
 
         "SecurityGroups": [
 
@@ -60,7 +60,7 @@
 
         "ImageId": "ami-b97a12ce",
 
-        "InstanceType": "t1.micro" ,
+        "InstanceType": "t2.small",
 
         "SecurityGroups": [
 
@@ -89,13 +89,13 @@
 
           {
 
-            "CidrIp": "192.168.7.4/32" ,
+            "CidrIp": "37.17.210.74/32",
 
-            "FromPort": "22" ,
+            "FromPort": "22",
 
             "IpProtocol": "tcp",
 
-            "ToPort": "22" 
+            "ToPort": "22"
 
           }
 

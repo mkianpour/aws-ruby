@@ -33,7 +33,7 @@ class TemplateCreator
         if File.exists? file_name
             ec2_file = open(file_name)
             ec2_str = ec2_file.read.to_str
-            new_str = ec2_str.gsub("\"InstanceType\":", "\"InstanceType\": \"#{ec2type}\"")
+            new_str = ec2_str.gsub("\"InstanceType\": ", "\"InstanceType\": \"#{ec2type}\"")
             insert_in_template(new_str)     
         else
             puts "EC2 Template not found."
@@ -45,12 +45,12 @@ class TemplateCreator
         if File.exists? file_name
             sec_file = open(file_name)
             sec_str = sec_file.read.to_str
-            newsec_str = sec_str.gsub("\"FromPort\":", "\"FromPort\": \"#{port}\"")
-            newsec_str = newsec_str.gsub("\"ToPort\":", "\"ToPort\": \"#{port}\"")
+            newsec_str = sec_str.gsub("\"FromPort\": ", "\"FromPort\": \"#{port}\"")
+            newsec_str = newsec_str.gsub("\"ToPort\": ", "\"ToPort\": \"#{port}\"")
             if !aclnet.include? '/'
                 aclnet = aclnet + '/32'
             end
-            newsec_str = newsec_str.gsub("\"CidrIp\":", "\"CidrIp\": \"#{aclnet}\"")      
+            newsec_str = newsec_str.gsub("\"CidrIp\": ", "\"CidrIp\": \"#{aclnet}\"")      
             insert_in_template(newsec_str)     
         else
             puts "Sec Group Template not found."
