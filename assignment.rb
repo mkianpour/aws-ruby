@@ -18,7 +18,6 @@ class TemplateCreator
     def initialize(file_name)
         if File.exists? file_name
             generic_file = open(file_name)
-            puts generic_file.read
         else
             puts "Template not found."
             exit(1)
@@ -28,7 +27,7 @@ class TemplateCreator
 
 
     def add_ec2instance()
-    
+        puts "hello "
     end
     
     def add_sec_group()
@@ -65,5 +64,8 @@ ARGV.slice_before(/^--/).each do |name, value|
 end
 
 puts num_instances, ec2_type, acl_net, tcp_port
-#gen_template = TemplateCreator.new("./templates/general.json")
+gen_template = TemplateCreator.new("./templates/general.json")
 
+(1..num_instances).each do 
+    gen_template.add_ec2instance()
+end
