@@ -10,9 +10,6 @@
 ## AUTHOR: Mehdi Kianpour
 ## DATE: May, 2015
 
-require "json"
-
-
 class TemplateCreator
     
     attr_reader :path
@@ -30,7 +27,6 @@ class TemplateCreator
         end
     
     end
-
 
     def prepare_ec2instance(ec2type)
         file_name = "#{@path}/ec2.json"
@@ -72,13 +68,10 @@ end
 ##---------------------------------------------------------------
 #Number of instances, will be defined by user or default value: 1
 num_instances = 1
-
 #ec2 instance type, will be defined by user or default value: t1.micro
 ec2_type = "t1.micro"
-
 #Allowed subnets to access, will be defined by user or default value:
 acl_net = "0.0.0.0/0"
-
 #Allowed to and from port, will be defined by user or default value: 22
 tcp_port = 22
 
@@ -98,7 +91,6 @@ ARGV.slice_before(/^--/).each do |name, value|
 end
 
 gen_template = TemplateCreator.new("./templates")
-
 (1..num_instances).each do 
     gen_template.prepare_ec2instance(ec2_type)
 end
