@@ -15,9 +15,15 @@ require "json"
 
 class TemplateCreator
     
-    def initialize(file_name)
+    attr_reader :path
+    attr_reader :out_json
+    
+    def initialize(path_name)
+        @path = path_name
+        file_name = "#{path_name}/general.json"
         if File.exists? file_name
             generic_file = open(file_name)
+            @out_json = generic_file.read
         else
             puts "Template not found."
             exit(1)
@@ -26,12 +32,26 @@ class TemplateCreator
     end
 
 
-    def add_ec2instance()
-        puts "hello "
+    def add_ec2instance(ec2type)
+        file_name = "#{@path}/ec2.json"
+        if File.exists? file_name
+            ec2_file = open(file_name)
+            ec2_str = ec2_file.read.to_str
+            new_str = ec2_str.gsub("\"InstanceType\":", "\"InstanceType\": \"#{ec2type}\"")
+            @out_json = @out_json + new_str
+        else
+            puts "EC2 Template not found."
+        end
     end
     
-    def add_sec_group()
-    
+    def add_sec_group(aclnet,port)
+        file_name = "#{@path}/secgrp.json"
+        if File.exists? file_name
+            sec_file = open(file_name)
+            @out_json = @out_json + sec_file.read
+        else
+            puts "Sec Group Template not found."
+        end  
     end
     
 end
@@ -64,8 +84,10 @@ ARGV.slice_before(/^--/).each do |name, value|
 end
 
 puts num_instances, ec2_type, acl_net, tcp_port
-gen_template = TemplateCreator.new("./templates/general.json")
+gen_template = TemplateCreator.new("./templates")
 
 (1..num_instances).each do 
-    gen_template.add_ec2instance()
+    gen_template.add_ec2instance(ec2_type)
 end
+gen_template.add_sec_group(acl_net, tcp_port)
+puts gen_template.out_json
