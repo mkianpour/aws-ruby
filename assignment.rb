@@ -10,11 +10,16 @@
 ## AUTHOR: Mehdi Kianpour
 ## DATE: May, 2015
 
+###---------------------------------------------------------------------
+# This class has necessary methods to generate proper cfn template
+# some cfn template parameters can be passed to the methods of this class
+
 class TemplateCreator
     
     attr_reader :path
     attr_reader :out_json
     
+    #When initialized, a pre-generated fix template will be loaded
     def initialize(path_name)
         @path = path_name
         file_name = "#{path_name}/general.json"
@@ -24,10 +29,12 @@ class TemplateCreator
         else
             puts "Template not found."
             exit(1)
-        end
-    
+        end    
     end
 
+    #This function prepares EC2Instance part of cfn template
+    #with proper values that are fed as parameter, generates appropriate string
+    #to be added inside Resources block
     def prepare_ec2instance(ec2type,index)
         file_name = "#{@path}/ec2.json"
         if File.exists? file_name
@@ -41,6 +48,9 @@ class TemplateCreator
         end
     end
     
+    #This function prepares InstanceSecurityGroup part of cfn template 
+    #with proper values that are fed as parameter, generates appropriate string
+    #to be added inside Resources block
     def prepare_sec_group(aclnet,port)
         file_name = "#{@path}/secgrp.json"
         if File.exists? file_name
@@ -58,12 +68,14 @@ class TemplateCreator
         end  
     end
 
+    #This functiom adds generated strings to the final cfn template in proper place
+    #Based on general template, it finds second last occurance of } char before 
+    #which is the end of Resources block
     def insert_in_template(str_to_ins)
         lasti = @out_json.rindex('}')
         onetolast = @out_json.rindex('}',lasti-1)
         @out_json = @out_json.insert(onetolast-1, str_to_ins)
     end
-    
 end
 
 ##---------------------------------------------------------------
@@ -91,6 +103,8 @@ ARGV.slice_before(/^--/).each do |name, value|
     end
 end
 
+#An object from TemplateCreator class is instanciated and
+#appropriate methods are called to generate the cfn template
 gen_template = TemplateCreator.new("./templates")
 (1..num_instances).each do |i|
     gen_template.prepare_ec2instance(ec2_type,i)
