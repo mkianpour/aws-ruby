@@ -39,10 +39,9 @@ class TemplateCreator
     file_name = "#{@path}/ec2.json"
     if File.exist? file_name
       ec2_file = open(file_name)
-      ec2_str = ec2_file.read.to_str
+      ec2_str = ec2_file.read
       ec2_str = (index != 1 ? ec2_str.gsub('EC2Instance', "EC2Instance#{index}") : ec2_str)
       new_str = ec2_str.gsub("\"InstanceType\": ", "\"InstanceType\": \"#{ec2type}\"")
-      insert_in_template(new_str)
     else
       puts 'EC2 Template not found.'
     end
@@ -60,7 +59,6 @@ class TemplateCreator
       newsec_str = newsec_str.gsub("\"ToPort\": ", "\"ToPort\": \"#{port}\"")
       aclnet = (!aclnet.include? '/') ? (aclnet + '/32') : aclnet
       newsec_str = newsec_str.gsub("\"CidrIp\": ", "\"CidrIp\": \"#{aclnet}\"")
-      insert_in_template(newsec_str)
     else
       puts 'Sec Group Template not found.'
     end
@@ -72,7 +70,7 @@ class TemplateCreator
   def insert_in_template(str_to_ins)
     lasti = @out_json.rindex('}')
     onetolast = @out_json.rindex('}', lasti - 1)
-    @out_json = @out_json.insert(onetolast - 1, str_to_ins)
+    @out_json = @out_json.insert(onetolast - 2, str_to_ins)
   end
 end
 
@@ -105,7 +103,9 @@ end
 # appropriate methods are called to generate the cfn template
 gen_template = TemplateCreator.new('./templates')
 (1..num_instances).each do |i|
-  gen_template.prepare_ec2instance(ec2_type, i)
+  ec2str = gen_template.prepare_ec2instance(ec2_type, i)
+  gen_template.insert_in_template(ec2str)
 end
-gen_template.prep_sec_group(acl_net, tcp_port)
+secstr = gen_template.prep_sec_group(acl_net, tcp_port)
+gen_template.insert_in_template(secstr)
 puts gen_template.out_json

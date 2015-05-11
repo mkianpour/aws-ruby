@@ -1,3 +1,4 @@
+
     "InstanceSecurityGroup": {
 
       "Properties": {
@@ -25,5 +26,4 @@
       "Type": "AWS::EC2::SecurityGroup"
 
     }
-
 

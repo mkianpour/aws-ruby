@@ -1,3 +1,4 @@
+
     "EC2Instance": {
 
       "Properties": {
@@ -21,4 +22,3 @@
       "Type": "AWS::EC2::Instance"
 
     },
-
