@@ -34,7 +34,7 @@ describe TemplateCreator do
 
     context 'More than one instance' do
       it 'prepares final cfn compatible template with multiple instances' do
-        testHash = { 'ex2type' => 't2.small', 'num' => 2, 'aclnet' => '37.17.210.74/32', 'toport' => 22 }
+        testHash = { 'ex2type' => 't2.small', 'num' => 2, 'aclnet' => '37.17.210.74', 'toport' => 22 }
         (1..testHash['num']).each do |i|
           ec2str = @tmpl.prep_ec2(testHash['ex2type'], i)
           @tmpl.insert_in_template(ec2str)
