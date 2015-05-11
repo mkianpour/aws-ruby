@@ -41,7 +41,7 @@ class TemplateCreator
       ec2_file = open(file_name)
       ec2_str = ec2_file.read
       ec2_str = (index != 1 ? ec2_str.gsub('EC2Instance', "EC2Instance#{index}") : ec2_str)
-      new_str = ec2_str.gsub("\"InstanceType\": ", "\"InstanceType\": \"#{ec2type}\"")
+      ec2_str.gsub("\"InstanceType\": ", "\"InstanceType\": \"#{ec2type}\"")
     else
       puts 'EC2 Template not found.'
     end
@@ -53,12 +53,11 @@ class TemplateCreator
   def prep_sec_group(aclnet, port)
     file_name = "#{@path}/secgrp.json"
     if File.exist? file_name
-      sec_file = open(file_name)
-      sec_str = sec_file.read.to_str
+      sec_str = open(file_name).read.to_str
       newsec_str = sec_str.gsub("\"FromPort\": ", "\"FromPort\": \"#{port}\"")
       newsec_str = newsec_str.gsub("\"ToPort\": ", "\"ToPort\": \"#{port}\"")
       aclnet = (!aclnet.include? '/') ? (aclnet + '/32') : aclnet
-      newsec_str = newsec_str.gsub("\"CidrIp\": ", "\"CidrIp\": \"#{aclnet}\"")
+      newsec_str.gsub("\"CidrIp\": ", "\"CidrIp\": \"#{aclnet}\"")
     else
       puts 'Sec Group Template not found.'
     end
@@ -71,6 +70,11 @@ class TemplateCreator
     lasti = @out_json.rindex('}')
     onetolast = @out_json.rindex('}', lasti - 1)
     @out_json = @out_json.insert(onetolast - 2, str_to_ins)
+  end
+
+  # Just to show the result in console
+  def show
+    puts @out_json
   end
 end
 
@@ -85,7 +89,7 @@ acl_net = '0.0.0.0/0'
 tcp_port = 22
 
 # This ruby style loop gets possible arguments by parsing
-# parameters recognized by -- and sets the correspondant value
+# parameters and sets the correspondant value
 ARGV.slice_before(/^--/).each do |name, value|
   case name
   when '--instances'
@@ -108,4 +112,4 @@ gen_template = TemplateCreator.new('./templates')
 end
 secstr = gen_template.prep_sec_group(acl_net, tcp_port)
 gen_template.insert_in_template(secstr)
-puts gen_template.out_json
+gen_template.show
