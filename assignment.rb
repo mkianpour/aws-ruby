@@ -35,7 +35,7 @@ class TemplateCreator
   # This function prepares EC2Instance part of cfn template
   # with proper values that are fed as parameter, generates appropriate string
   # to be added inside Resources block
-  def prepare_ec2instance(ec2type, index)
+  def prep_ec2(ec2type, index)
     file_name = "#{@path}/ec2.json"
     if File.exist? file_name
       ec2_file = open(file_name)
@@ -78,7 +78,7 @@ end
 # Number of instances, will be defined by user or default value: 1
 num_instances = 1
 # ec2 instance type, will be defined by user or default value: t1.micro
-ec2_type = 't1.micro'
+ec2_type = 't2.micro'
 # Allowed subnets to access, will be defined by user or default value:
 acl_net = '0.0.0.0/0'
 # Allowed to and from port, will be defined by user or default value: 22
@@ -103,7 +103,7 @@ end
 # appropriate methods are called to generate the cfn template
 gen_template = TemplateCreator.new('./templates')
 (1..num_instances).each do |i|
-  ec2str = gen_template.prepare_ec2instance(ec2_type, i)
+  ec2str = gen_template.prep_ec2(ec2_type, i)
   gen_template.insert_in_template(ec2str)
 end
 secstr = gen_template.prep_sec_group(acl_net, tcp_port)

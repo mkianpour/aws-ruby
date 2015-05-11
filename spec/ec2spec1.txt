@@ -1,0 +1,24 @@
+
+    "EC2Instance": {
+
+      "Properties": {
+
+        "ImageId": "ami-b97a12ce",
+
+        "InstanceType": "t2.small",
+
+        "SecurityGroups": [
+
+          {
+
+            "Ref": "InstanceSecurityGroup"
+
+          }
+
+        ]
+
+      },
+
+      "Type": "AWS::EC2::Instance"
+
+    },
